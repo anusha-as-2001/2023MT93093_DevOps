@@ -2,42 +2,23 @@ pipeline {
     agent any
     
     stages {
-        stage('Declarative: Checkout SCM') {
+        stage('Checkout') {
             steps {
-                checkout([$class: 'GitSCM', 
-                    branches: [[name: 'master']], 
-                    doGenerateSubmoduleConfigurations: false, 
-                    extensions: [], 
-                    submoduleCfg: [], 
-                    userRemoteConfigs: [[url: 'https://github.com/anusha-as-2001/2023MT93081_Devops_A1.git']]
-                ])
+                checkout scm
             }
         }
         
-        stage('Initialize') {
-            steps {
-                echo 'Initializing...'
-                // Add any initialization steps here
-            }
-        }
-        
-        stage('Build & Publish') {
+        stage('Build') {
             steps {
                 echo 'Building...'
-                // Add build steps here
-                sh 'mvn clean package' // Example Maven build command, replace with actual build command
-                
-                echo 'Publishing...'
-                // Add publish steps here
-                sh 'cp target/*.jar artifacts/' // Example publishing step, replace with actual publish command
+                sh 'mvn clean package'
             }
         }
         
-        stage('Upload to Azure Artifact') {
+        stage('Publish') {
             steps {
-                echo 'Uploading to Azure Artifact...'
-                // Add steps to upload artifacts to Azure here
-                sh 'az artifact push --file artifacts/*.jar --name <artifact_name> --version <version>' // Example Azure upload command, replace with actual upload command
+                echo 'Publishing...'
+                sh 'cp target/*.jar artifacts/'
             }
         }
     }
@@ -45,8 +26,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            // Add any cleanup steps here
-            sh 'rm -rf artifacts/' // Example cleanup step, replace with actual cleanup command
+            sh 'rm -rf artifacts/'
         }
     }
 }
