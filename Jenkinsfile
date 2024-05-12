@@ -2,34 +2,47 @@ pipeline {
     agent any
     
     stages {
-        stage('Checkout') {
+        stage('Declarative: Checkout SCM') {
             steps {
-                // Checkout the code from Git repository
-                git 'https://github.com/anusha-as-2001/2023MT93093_DevOps.git'
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: 'master']], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/anusha-as-2001/2023MT93081_Devops_A1.git']]
+                ])
             }
         }
-        stage('Build') {
+        
+        stage('Initialize') {
             steps {
-                // Perform any build steps here
-                sh 'mvn clean package' // Assuming Maven for Java project, adjust as needed
+                echo 'Initializing...'
+                // Add any initialization steps here
             }
         }
-        stage('Compile') {
+        
+        stage('Build & Publish') {
             steps {
-                // Perform any compilation steps here
-                sh 'javac -d ./bin ./src/*.java' // Example compilation command for Java, adjust as needed
+                echo 'Building...'
+                // Add build steps here
+                
+                echo 'Publishing...'
+                // Add publish steps here
+            }
+        }
+        
+        stage('Upload to Azure Artifact') {
+            steps {
+                echo 'Uploading to Azure Artifact...'
+                // Add steps to upload artifacts to Azure here
             }
         }
     }
     
     post {
-        success {
-            // If the pipeline runs successfully, you can trigger additional actions here
-            echo 'Pipeline ran successfully!'
-        }
-        failure {
-            // If the pipeline fails, you can trigger additional actions here
-            echo 'Pipeline failed!'
+        always {
+            echo 'Cleaning up...'
+            // Add any cleanup steps here
         }
     }
 }
