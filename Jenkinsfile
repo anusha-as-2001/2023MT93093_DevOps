@@ -2,23 +2,39 @@ pipeline {
     agent any
     
     stages {
-        stage('Checkout') {
+        stage('Declarative: Checkout SCM') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM', 
+                    branches: [[name: 'master']], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/anusha-as-2001/2023MT93093_DevOps.git']]
+                ])
             }
         }
         
-        stage('Build') {
+        stage('Initialize') {
+            steps {
+                echo 'Initializing...'
+                // Add any initialization steps here
+            }
+        }
+        
+        stage('Build & Publish') {
             steps {
                 echo 'Building...'
-                sh 'mvn clean package'
+                // Add build steps here
+                
+                echo 'Publishing...'
+                // Add publish steps here
             }
         }
         
-        stage('Publish') {
+        stage('Upload to Azure Artifact') {
             steps {
-                echo 'Publishing...'
-                sh 'cp target/*.jar artifacts/'
+                echo 'Uploading to Azure Artifact...'
+                // Add steps to upload artifacts to Azure here
             }
         }
     }
@@ -26,7 +42,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            sh 'rm -rf artifacts/'
+            // Add any cleanup steps here
         }
     }
 }
